@@ -6,6 +6,7 @@ manifest:
   projects:
     - name: zephyr
       remote: keychron
+      revision: main
       # rtl87x2g 리비전 제거 - 기본 브랜치 사용
       clone-depth: 1
       import:

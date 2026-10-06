@@ -1,7 +1,52 @@
-include:
-  - board: rtl8762gtu_kb
-    shield: keychron_k1_ultra_ansi
-    artifact-name: K1-Ultra-8K
-    cmake-args: >-
-      -DKEYMAP_FILE=$GITHUB_WORKSPACE/config/K1-Ultra-8K.keymap
-      -DEXTRA_CONF_FILE=$GITHUB_WORKSPACE/config/K1-Ultra-8K.conf
+name: Build Keychron K1 Ultra 8K
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container:
+      image: zmkfirmware/zmk-build-arm:stable
+    env:
+      BOARD: rtl8762gtu_kb
+      SHIELD: keychron_k1_ultra_ansi
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Cache west modules
+        uses: actions/cache@v4
+        with:
+          path: |
+            modules/
+            tools/
+            zephyr/
+            zmk/
+            bootloader/
+          key: ${{ runner.os }}-west-${{ hashFiles('config/west.yml') }}
+
+      - name: West init and update
+        run: |
+          west init -l config
+          west update --fetch-opt=--filter=tree:0
+          west zephyr-export
+
+      - name: Build firmware
+        run: |
+          west build -s zmk/app -d build/K1-Ultra-8K -b "$BOARD" -- \
+            -DZMK_CONFIG="$GITHUB_WORKSPACE/config" \
+            -DSHIELD="$SHIELD" \
+            -DKEYMAP_FILE=$GITHUB_WORKSPACE/config/K1-Ultra-8K.keymap \
+            -DEXTRA_CONF_FILE=$GITHUB_WORKSPACE/config/K1-Ultra-8K.conf
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: K1-Ultra-8K
+          path: |
+            build/K1-Ultra-8K/zephyr/zmk.bin
+            build/K1-Ultra-8K/zephyr/zmk.hex
+          if-no-files-found: warn

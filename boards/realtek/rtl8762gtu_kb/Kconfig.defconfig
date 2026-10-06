@@ -1,0 +1,6 @@
+if BOARD_RTL8762GTU
+
+config BOARD
+    default "rtl8762gtu"
+
+endif #BOARD_RTL8762GTU

@@ -1,14 +1,18 @@
 manifest:
+  version: "0.13"
   remotes:
     - name: keychron
       url-base: https://github.com/Keychron
   projects:
     - name: zephyr
       remote: keychron
+      # rtl87x2g 리비전 제거 - 기본 브랜치 사용
       clone-depth: 1
       import:
         name-blocklist:
+          # CI and tooling
           - ci-tools
+          # HALs - 불필요한 하드웨어 지원 제거
           - hal_altera
           - hal_cypress
           - hal_infineon
@@ -33,6 +37,7 @@ manifest:
           - hal_telink
           - hal_wurthelektronik
           - hal_stm32
+          # 불필요한 라이브러리
           - cmsis-dsp
           - cmsis-nn
           - fatfs
@@ -45,3 +50,5 @@ manifest:
           - trusted-firmware-m
   self:
     path: config
+    # west 확장 명령어 (필요시 추가)
+    # west-commands: scripts/west-commands.yml

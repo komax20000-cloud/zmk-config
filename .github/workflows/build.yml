@@ -1,6 +1,7 @@
-name: Build ZMK firmware
-on: [push, pull_request, workflow_dispatch]
-
-jobs:
-  build:
-    uses: zmkfirmware/zmk/.github/workflows/build-user-config.yml@v0.3
+include:
+  - board: rtl8762gtu_kb
+    shield: keychron_k1_ultra_ansi
+    artifact-name: K1-Ultra-8K
+    cmake-args: >-
+      -DKEYMAP_FILE=$GITHUB_WORKSPACE/config/K1-Ultra-8K.keymap
+      -DEXTRA_CONF_FILE=$GITHUB_WORKSPACE/config/K1-Ultra-8K.conf
